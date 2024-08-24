@@ -1,0 +1,42 @@
+import pandas as pd
+
+# Provided data
+data = {
+    'Item Description': [
+        'Oxide CMP slurry with ceria Abrasive (HITACHI HS-8005-D4)',
+        'Additive for oxide CMP slurry (Hitachi -HS-7307GP)',
+        'ISO-PROPYL ALCOHOL',
+        'PL 4219 SLURRY, Package : 55 UG Drum',
+        'SEMI-SPERSE W 2000 SLURRY, package 200L kodama Drum',
+        'Ammonium Hydroxide 29%'
+    ],
+    'Section': ['CMP', 'CMP', 'CMP', 'CMP', 'CMP', 'CMP'],
+    'Cons / Wafer': [0.02166666667, 0.03333333333, 0.5158333333, 0.6183333333, 1.783333333, 0.7845916666667],
+    'Yield': [95, 95, 95, 95, 95, 95],
+    'Stock Store': [0, 0, 8, 880, 0, 0]
+}
+
+# Create DataFrame
+df = pd.DataFrame(data)
+
+num_wafers = int(input("Enter the number of wafers per month (CMP): "))
+
+# Calculate actual requirements with 5% yield assumption
+df['Actual Required_Per annum'] = (df['Cons / Wafer'] * 12) * 1.05 * num_wafers  # Assuming 5% yield
+
+# Calculate available stock
+df['Available Stock'] = df['Stock Store'] - df['Actual Required_Per annum']
+
+# Check for items with negative available stock
+negative_stock_items = df[df['Available Stock'] < 0]['Item Description'].tolist()
+
+# Total material requirement planning
+total_material_requirements = df['Actual Required_Per annum'].sum()
+
+# Print results
+print("Material Requirement Planning (MRP): ")
+df.index = df.index + 1  # Start index from 1 for display
+print(df)
+print("\nNegative Stock Items:")
+print(negative_stock_items)
+print("\nTotal Material Requirements: ", total_material_requirements)
